@@ -41,9 +41,7 @@ debootstrap \
   --foreign \
   --include=\
 netbase,\
-ifupdown,\
 net-tools,\
-isc-dhcp-client,\
 systemd-sysv,\
 u-boot-tools,\
 initramfs-tools,\
