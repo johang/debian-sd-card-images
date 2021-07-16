@@ -1,0 +1,62 @@
+version: 0.2
+
+env:
+  variables:
+    U_BOOT_GIT_URL: "https://github.com/u-boot/u-boot.git"
+    U_BOOT_GIT_REV: "master"
+    ATF_GIT_URL: "https://github.com/ARM-software/arm-trusted-firmware.git"
+    ATF_GIT_REV: "master"
+
+batch:
+  fast-fail: false
+  build-list:
+    - identifier: raspberrypi_2b
+      env:
+        variables:
+          CHIP: bcm2836
+          DEFCONFIG: rpi_2_defconfig
+          TUPLE: arm-linux-gnueabihf
+    - identifier: raspberrypi_3b
+      env:
+        variables:
+          CHIP: bcm2837
+          DEFCONFIG: rpi_3_defconfig
+          TUPLE: aarch64-linux-gnu
+
+phases:
+  install:
+    commands:
+      - "apt-get update"
+      - "apt-get --assume-yes
+                 --no-install-recommends
+                 install device-tree-compiler
+                         gcc
+                         gcc-arm-none-eabi
+                         make
+                         bc
+                         bzip2
+                         bison
+                         flex
+                         git
+                         python2-dev
+                         python3-dev
+                         python3-pkg-resources
+                         swig
+                         parted
+                         e2fsprogs
+                         dosfstools
+                         mtools
+                         libssl-dev"
+      - "[ \"$(uname -m)\" != \"armv7l\" ] &&
+         apt-get --assume-yes
+                 install gcc-arm-linux-gnueabihf"
+      - "[ \"$(uname -m)\" != \"aarch64\" ] &&
+         apt-get --assume-yes
+                 install gcc-aarch64-linux-gnu"
+  build:
+    commands:
+      - scripts/build-boot $CODEBUILD_BATCH_BUILD_IDENTIFIER $CHIP $DEFCONFIG $TUPLE
+
+artifacts:
+  files:
+    - boot-*.bin
