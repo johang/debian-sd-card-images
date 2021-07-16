@@ -55,7 +55,7 @@ phases:
                  install gcc-aarch64-linux-gnu"
   build:
     commands:
-      - scripts/build-boot $CODEBUILD_BATCH_BUILD_IDENTIFIER $CHIP $DEFCONFIG $TUPLE
+      - PATH=$PATH:$CODEBUILD_SRC_DIR/scripts scripts/build-boot $CODEBUILD_BATCH_BUILD_IDENTIFIER $CHIP $DEFCONFIG $TUPLE
 
 artifacts:
   files:
